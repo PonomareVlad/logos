@@ -137,4 +137,4 @@ if (from) {
         files.shift();
     }
     await sendMessage(peer, defaultEmoji);
-} esle await sendMessage(peer, '/newemojipack');
+} else await sendMessage(peer, '/newemojipack');
