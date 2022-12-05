@@ -11,10 +11,6 @@ import {getUser, sendMedia, sendMessage} from "./methods.mjs";
 
 if (!await auth(process.env)) process.exit();
 
-let lastFile,
-    packs = 0,
-    counter = 0;
-
 const triggers = {
     emoji: [
         `Thanks!
@@ -67,12 +63,23 @@ const username = process.env.username || 'Stickers';
 const dir = new URL('../stickers/', import.meta.url);
 const maxCount = parseInt(process.env.max || 200);
 const {users: [peer]} = await getUser(username);
-const files = readdirSync(dir);
 const from = process.env.from;
+
+let files = readdirSync(dir);
+let counter = 0;
+let packs = 0;
+let lastFile;
+
+export const filter = file => file.endsWith('-icon.tgs') ? file.replace('-icon.tgs', '') : undefined;
 
 export const getPackTitle = (id = packs) => `SVGPORN Test ${id}`;
 
 export const getPackName = (id = packs) => `SVGPORN_TEST_${id}`;
+
+export function filterFiles() {
+    const withIcons = files.filter(file => file.endsWith('-icon.tgs')).map(file => file.replace('-icon.tgs', '.tgs'));
+    files = files.filter(file => !withIcons.includes(file));
+}
 
 export function handleStickerUpdates({_, updates = []} = {}) {
     if (_ !== 'updates' || !Array.isArray(updates)) return;
@@ -120,23 +127,27 @@ export function handleStickerMessage(update = {}) {
     }
 }
 
-async function publish() {
+export async function publish() {
     await sendMessage(peer, '/publish')
     setTimeout(() => sendMessage(peer, '/skip'), 1000)
 }
 
-api.mtproto.updates.on('updateShortSentMessage', handleStickerUpdates);
-api.mtproto.updates.on('updateShortChatMessage', handleStickerUpdates);
-api.mtproto.updates.on('updateShortMessage', handleStickerUpdates);
-api.mtproto.updates.on('updatesCombined', handleStickerUpdates);
-api.mtproto.updates.on('updatesTooLong', handleStickerUpdates);
-api.mtproto.updates.on('updateShort', handleStickerUpdates);
-api.mtproto.updates.on('updates', handleStickerUpdates);
+export function init() {
+    filterFiles();
 
-if (from) {
-    let offset = files.length - parseInt(from);
-    while (offset--) {
-        files.shift();
-    }
-    await sendMessage(peer, defaultEmoji);
-} else await sendMessage(peer, '/newemojipack');
+    api.mtproto.updates.on('updateShortSentMessage', handleStickerUpdates);
+    api.mtproto.updates.on('updateShortChatMessage', handleStickerUpdates);
+    api.mtproto.updates.on('updateShortMessage', handleStickerUpdates);
+    api.mtproto.updates.on('updatesCombined', handleStickerUpdates);
+    api.mtproto.updates.on('updatesTooLong', handleStickerUpdates);
+    api.mtproto.updates.on('updateShort', handleStickerUpdates);
+    api.mtproto.updates.on('updates', handleStickerUpdates);
+
+    if (from) {
+        let offset = files.length - parseInt(from);
+        while (offset--) files.shift();
+        return sendMessage(peer, defaultEmoji);
+    } else return sendMessage(peer, '/newemojipack');
+}
+
+await init();
