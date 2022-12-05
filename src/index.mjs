@@ -57,7 +57,8 @@ Send me a replacement emoji`,
     ],
     increment: [
         `Увы, такой адрес уже занят`,
-        `Sorry, this short name is already taken`
+        `Sorry, this short name is already taken`,
+        `К сожалению, это некорректное название`
     ]
 };
 
