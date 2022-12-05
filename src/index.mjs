@@ -1,7 +1,7 @@
 import {readdirSync, writeFileSync, mkdirSync} from "fs";
 
 if (process.env.auth) {
-    mkdirSync(new URL('../.telegram/', import.meta.url), {recursive: true});
+    mkdirSync(new URL('../.telegram/', import.meta.url).pathname, {recursive: true});
     writeFileSync(new URL('../.telegram/auth.json', import.meta.url).pathname, process.env.auth);
 }
 
