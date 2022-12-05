@@ -1,4 +1,4 @@
-import {readdirSync, writeFileSync, mkdirSync, readFileSync} from "fs";
+import {writeFileSync, readFileSync} from "fs";
 
 const {logos, tags} = JSON.parse(readFileSync('../svgporn.json').toString());
 
@@ -78,10 +78,11 @@ const groups = {};
 
 logos.forEach((logo = {}) => {
     let {categories = [], files = []} = logo;
-    if (files.length > 1) logo.files = files.filter(file => file.endsWith('-icon.svg') || file.endsWith('-icon-alt.svg'));
+    files = files.map(file => file.replace('.svg', '.tgs'));
+    if (files.length > 1) files = files.filter(file => file.endsWith('-icon.tgs') || file.endsWith('-icon-alt.tgs'));
     const category = categories.filter(category => !excluded.includes(category)).pop() || categories.pop() || 'other';
     if (!groups[category]) groups[category] = [];
-    groups[category].push(logo);
+    groups[category].push({...logo, files});
 })
 
 excluded.forEach(key => groups[key] = groups[key].filter((logo = {}) => {

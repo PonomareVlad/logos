@@ -1,0 +1,8 @@
+{
+  "buildCommand": "node src/index.mjs",
+  "outputDirectory": "stickers",
+  "github": {
+    "autoJobCancelation": false,
+    "silent": true
+  }
+}
