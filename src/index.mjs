@@ -23,6 +23,7 @@ Send me a replacement emoji`,
 Пожалуйста, отправьте мне стандартный эмодзи`,
     ],
     sticker: [
+        `File type is invalid`,
         `Пожалуйста, отправьте мне файл`,
         `Congratulations. Emoji in the set`,
         `Эмодзи добавлен. Количество эмодзи в наборе`,
@@ -79,7 +80,7 @@ export function handleStickerMessage(update = {}) {
     const {message: {message}} = update;
     const [action] = Object.entries(triggers).find(([, variants]) => variants.some(trigger => message.startsWith(trigger))) || [];
     if (!action) return;
-    console.log(`[${action}]`, message + `\r\n`);
+    console.log(action, files.length, packs, counter);
     switch (action) {
         case 'sticker':
             if (!files.length || ++counter > maxCount) return publish();
