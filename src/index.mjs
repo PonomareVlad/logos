@@ -1,6 +1,12 @@
+import {readdirSync, writeFileSync, mkdirSync} from "fs";
+
+if (process.env.auth) {
+    mkdirSync(new URL('../.telegram/', import.meta.url), {recursive: true});
+    writeFileSync(new URL('../.telegram/auth.json', import.meta.url).pathname, process.env.auth);
+}
+
 import api from "./api.mjs";
 import auth from "./auth.mjs";
-import {readdirSync} from "fs";
 import {getUser, sendMedia, sendMessage} from "./methods.mjs";
 
 if (!await auth(process.env)) process.exit();
