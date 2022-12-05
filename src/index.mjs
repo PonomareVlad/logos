@@ -66,6 +66,7 @@ const dir = new URL('../stickers/', import.meta.url);
 const maxCount = parseInt(process.env.max || 200);
 const {users: [peer]} = await getUser(username);
 const files = readdirSync(dir);
+const from = process.env.from;
 
 export const getPackTitle = (id = packs) => `SVGPORN Test ${id}`;
 
@@ -130,4 +131,10 @@ api.mtproto.updates.on('updatesTooLong', handleStickerUpdates);
 api.mtproto.updates.on('updateShort', handleStickerUpdates);
 api.mtproto.updates.on('updates', handleStickerUpdates);
 
-await sendMessage(peer, '/newemojipack');
+if (from) {
+    let offset = files.length - parseInt(from);
+    while (offset--) {
+        files.shift();
+    }
+    await sendMessage(peer, defaultEmoji);
+} esle await sendMessage(peer, '/newemojipack');
