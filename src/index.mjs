@@ -56,7 +56,8 @@ Send me a replacement emoji`,
         `A new set of custom animated emoji`
     ],
     increment: [
-        `Увы, такой адрес уже занят.`
+        `Увы, такой адрес уже занят`,
+        `Sorry, this short name is already taken`
     ]
 };
 
